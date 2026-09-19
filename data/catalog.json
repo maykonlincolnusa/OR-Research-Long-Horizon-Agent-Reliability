@@ -7,6 +7,7 @@
   },
   "assets": [
     {"name": "benchmark_tasks", "path": "data/benchmarks/*.jsonl", "grain": "one task", "owner": "research", "classification": "public/review-required"},
+    {"name": "benchmark_v0_1", "path": "data/benchmark-v0.1/", "grain": "frozen source-coordinate task card", "owner": "research", "classification": "public metadata; evaluator content withheld"},
     {"name": "run_records", "path": "results/runs.jsonl", "grain": "task x treatment x seed", "owner": "harness", "classification": "internal until reviewed"},
     {"name": "event_log", "path": "results/events.jsonl", "grain": "event", "owner": "harness", "classification": "internal until redaction validation"},
     {"name": "experiment_warehouse", "path": "results/warehouse.sqlite", "grain": "experiment", "owner": "data-engineering", "classification": "derived"}

@@ -1,0 +1,25 @@
+{
+  "benchmark_id": "longhorizon-v0.1",
+  "split_policy": {
+    "development": "Agent prompts, tool policies and non-semantic runtime fixes may be developed only on these tasks.",
+    "holdout": "No agent or prompt change may be selected based on these outcomes. Run once at the preregistered confirmatory point.",
+    "repository_disjoint": true,
+    "source_instance_disjoint": true
+  },
+  "development": [
+    "lh-v01-astropy-astropy-12907",
+    "lh-v01-django-django-10554",
+    "lh-v01-sphinx-doc-sphinx-10466",
+    "lh-v01-pydata-xarray-4966",
+    "lh-v01-pytest-dev-pytest-10051",
+    "lh-v01-pylint-dev-pylint-4551"
+  ],
+  "holdout": [
+    "lh-v01-matplotlib-matplotlib-13989",
+    "lh-v01-mwaskom-seaborn-3069",
+    "lh-v01-pallets-flask-5014",
+    "lh-v01-psf-requests-1142",
+    "lh-v01-scikit-learn-scikit-learn-10297",
+    "lh-v01-sympy-sympy-12489"
+  ]
+}

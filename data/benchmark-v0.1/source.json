@@ -1,0 +1,11 @@
+{
+  "benchmark_id": "longhorizon-v0.1",
+  "source_dataset": "SWE-bench/SWE-bench_Verified",
+  "source_revision": "78f471bf655a3137b2e8a75af1501690ec009ec3",
+  "source_file": "data/test-00000-of-00001.parquet",
+  "source_file_sha256": "030cfd7f2a704c4c0226e7f104c725a3b41230b1d3517f9c915ad7ea5be3fa25",
+  "source_license": "MIT",
+  "source_accessed_at": "2026-09-19",
+  "task_count": 12,
+  "materialization_policy": "Resolve the source dataset at the pinned revision, select by source_instance_id, verify source_file_sha256 and then verify every per-field hash in tasks.jsonl. Never expose gold_patch or test_patch to the agent runtime."
+}

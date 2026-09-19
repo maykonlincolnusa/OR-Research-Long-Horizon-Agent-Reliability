@@ -12,6 +12,7 @@ from longhorizon.integrity import build_manifest, validate_tasks
 from longhorizon.quality import assess_quality
 from longhorizon.data_engineering import validate_events, validate_run_records
 from longhorizon.logging import event
+from longhorizon.benchmark import validate_benchmark_files
 from longhorizon.types import Treatment
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,6 +61,14 @@ class PipelineTests(unittest.TestCase):
         events = [event(record["run_id"], task.id, 0, "run_started", {}), event(record["run_id"], task.id, 1, "run_finished", {})]
         self.assertEqual(validate_run_records([record]), [])
         self.assertEqual(validate_events(events, {record["run_id"]}), [])
+
+    def test_frozen_real_task_benchmark_is_valid(self):
+        count = validate_benchmark_files(
+            ROOT / "data/benchmark-v0.1/tasks.jsonl",
+            ROOT / "data/benchmark-v0.1/splits.json",
+            ROOT / "data/benchmark-v0.1/source.json",
+        )
+        self.assertEqual(count, 12)
 
 
 if __name__ == "__main__":

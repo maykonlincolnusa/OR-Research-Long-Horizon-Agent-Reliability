@@ -10,6 +10,7 @@ from .integrity import validate_tasks
 from .quality import check_files, write_check
 from .report import write_report
 from .data_engineering import build_warehouse, validate_artifacts
+from .benchmark import validate_benchmark_files, verify_source_artifact
 
 
 def main() -> None:
@@ -43,6 +44,14 @@ def main() -> None:
     warehouse.add_argument("--summary", required=True)
     warehouse.add_argument("--manifest", required=True)
     warehouse.add_argument("--database", required=True)
+    benchmark = commands.add_parser("validate-benchmark", help="validate frozen benchmark task cards and split policy")
+    benchmark.add_argument("--tasks", default="data/benchmark-v0.1/tasks.jsonl")
+    benchmark.add_argument("--splits", default="data/benchmark-v0.1/splits.json")
+    benchmark.add_argument("--source", default="data/benchmark-v0.1/source.json")
+    verify_source = commands.add_parser("verify-benchmark-source", help="verify task cards against a pinned source parquet")
+    verify_source.add_argument("--tasks", default="data/benchmark-v0.1/tasks.jsonl")
+    verify_source.add_argument("--source", default="data/benchmark-v0.1/source.json")
+    verify_source.add_argument("--parquet", required=True)
     args = parser.parse_args()
     if args.command == "run":
         output, count = run_experiment(args.config)
@@ -62,6 +71,12 @@ def main() -> None:
         if not result["passed"]:
             raise SystemExit(1)
     else:
+        if args.command == "validate-benchmark":
+            print(f"Benchmark valid: {validate_benchmark_files(args.tasks, args.splits, args.source)} tasks")
+            return
+        if args.command == "verify-benchmark-source":
+            print(f"Benchmark source verified: {verify_source_artifact(args.tasks, args.source, args.parquet)} tasks")
+            return
         if args.command == "validate-data":
             runs, events = validate_artifacts(args.runs, args.events)
             print(f"Normalized artifacts valid: {len(runs)} runs, {len(events)} events")

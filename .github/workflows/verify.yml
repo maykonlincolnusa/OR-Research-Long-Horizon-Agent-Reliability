@@ -24,6 +24,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -v
           python -m longhorizon validate --dataset data/benchmarks/seed_tasks.jsonl
+          python -m longhorizon validate-benchmark
           python -m longhorizon run --config configs/experiment.local.json
           python -m longhorizon analyze --results results/runs.jsonl --output results/summary.json
           python -m longhorizon validate-data --runs results/runs.jsonl --events results/events.jsonl

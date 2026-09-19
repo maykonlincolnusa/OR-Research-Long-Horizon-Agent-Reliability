@@ -17,6 +17,7 @@ services = [
   "nats-py>=2.9,<3",
   "PyYAML>=6.0,<7"
 ]
+benchmark = ["pyarrow>=15,<26"]
 
 [project.scripts]
 longhorizon = "longhorizon.cli:main"

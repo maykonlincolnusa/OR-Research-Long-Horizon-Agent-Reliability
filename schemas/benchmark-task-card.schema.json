@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LongHorizon Benchmark Task Card v0.1",
+  "type": "object",
+  "required": ["task_id", "split", "source_instance_id", "repo", "base_commit", "environment_setup_commit", "version", "difficulty", "eval_type", "image_reference", "fail_to_pass_count", "pass_to_pass_count", "problem_statement_sha256", "gold_patch_sha256", "test_patch_sha256", "eval_script_sha256"],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^lh-v01-"},
+    "split": {"enum": ["development", "holdout"]},
+    "repo": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+    "base_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "environment_setup_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "fail_to_pass_count": {"type": "integer", "minimum": 1},
+    "pass_to_pass_count": {"type": "integer", "minimum": 0}
+  },
+  "additionalProperties": false
+}

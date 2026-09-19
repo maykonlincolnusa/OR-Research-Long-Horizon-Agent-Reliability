@@ -31,4 +31,8 @@ O workflow do GitHub Actions repete testes, validação, experimento, análise, 
 
 [A arquitetura de dados](docs/data-architecture.md) formaliza as camadas raw, normalized e curated; os contratos ficam em `schemas/`, o catálogo em `data/catalog.json` e o warehouse local em SQLite. Não há dados reais ou credenciais versionados neste repositório.
 
+## Benchmark real e protocolo
+
+[Benchmark v0.1](docs/benchmark-v0.1.md) fixa 12 tarefas reais de um subconjunto humanamente validado, com splits development/holdout disjuntos por repositório e hashes de proveniência. [Protocolo pré-registrado](docs/preregistration-v0.1.md) separa o piloto de instrumentação da futura avaliação confirmatória.
+
 O protocolo está em [docs/research-protocol.md](docs/research-protocol.md) e o esqueleto do paper em [paper/outline.md](paper/outline.md).
