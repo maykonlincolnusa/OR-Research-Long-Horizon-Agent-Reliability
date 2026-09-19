@@ -1,0 +1,16 @@
+{
+  "minimum_runs": 60,
+  "minimum_groups": 4,
+  "minimum_runs_per_group": 15,
+  "required_metrics": [
+    "task_success_rate",
+    "task_success_ci95",
+    "hallucination_rate",
+    "tool_call_accuracy",
+    "mean_tokens",
+    "mean_latency_ms",
+    "mean_cost_usd",
+    "recovery_rate"
+  ],
+  "expect_simulated": true
+}

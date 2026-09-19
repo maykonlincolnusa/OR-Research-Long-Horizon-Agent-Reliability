@@ -9,6 +9,7 @@ from longhorizon.fixture_agent import execute_fixture
 from longhorizon.logging import sanitize
 from longhorizon.evaluator import evaluate_fixture
 from longhorizon.integrity import build_manifest, validate_tasks
+from longhorizon.quality import assess_quality
 from longhorizon.types import Treatment
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,6 +46,11 @@ class PipelineTests(unittest.TestCase):
         manifest = build_manifest(ROOT / "configs/experiment.local.json", ROOT / "data/benchmarks/seed_tasks.jsonl", tasks)
         self.assertEqual(manifest["dataset"]["task_count"], 3)
         self.assertEqual(len(manifest["dataset"]["sha256"]), 64)
+
+    def test_quality_gates_reject_underpowered_summary(self):
+        gates = {"minimum_runs": 2, "minimum_groups": 1, "minimum_runs_per_group": 2, "required_metrics": ["task_success_rate"], "expect_simulated": True}
+        summary = {"runs": 1, "simulated": True, "groups": [{"n": 1, "task_success_rate": 1.0}]}
+        self.assertFalse(assess_quality(summary, gates)["passed"])
 
 
 if __name__ == "__main__":

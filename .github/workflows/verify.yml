@@ -1,0 +1,34 @@
+name: verify-research-harness
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test and validate benchmark
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m unittest discover -s tests -v
+          python -m longhorizon validate --dataset data/benchmarks/seed_tasks.jsonl
+          python -m longhorizon run --config configs/experiment.local.json
+          python -m longhorizon analyze --results results/runs.jsonl --output results/summary.json
+          python -m longhorizon check --summary results/summary.json --gates configs/quality-gates.local.json --output results/quality.json
+          python -m longhorizon dashboard --summary results/summary.json --output results/dashboard.html
+          python -m longhorizon report --summary results/summary.json --quality results/quality.json --manifest results/manifest.json --output results/baseline.md
+      - name: Upload experiment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixture-baseline
+          path: results/

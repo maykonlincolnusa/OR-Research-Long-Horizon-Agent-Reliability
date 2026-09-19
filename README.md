@@ -17,4 +17,12 @@ py -m longhorizon dashboard --summary results/summary.json --output results/dash
 
 Cada rodada cria `runs.jsonl`, `events.jsonl` e `manifest.json`. O manifesto prende hashes do dataset e da configuração, versão do harness e runtime usado.
 
+## Fase de testes e KPIs
+
+- [Framework de KPIs](docs/kpi-framework.md): separa qualidade da evidência de desempenho do agente.
+- [Limites de capacidade](docs/capability-boundary.md): delimita o que esta fase pode e não pode concluir.
+- [Baseline público fixture](reports/baseline-fixture.md): verificação reproduzível do pipeline, explicitamente não empírica.
+
+O workflow do GitHub Actions repete testes, validação, experimento, análise, quality gates e relatório a cada push ou pull request. Os artefatos da rodada ficam anexados à execução do workflow.
+
 O protocolo está em [docs/research-protocol.md](docs/research-protocol.md) e o esqueleto do paper em [paper/outline.md](paper/outline.md).
