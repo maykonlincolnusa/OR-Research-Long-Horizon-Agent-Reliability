@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>LongHorizon | NASA Data Product</title>
+  <style>
+    :root { --ink:#10192c; --muted:#61708a; --paper:#f5f7fb; --card:#fff; --accent:#4d5cff; --line:#dfe5ef; }
+    * { box-sizing:border-box } body { margin:0; background:var(--paper); color:var(--ink); font:15px/1.5 Inter,ui-sans-serif,system-ui,sans-serif }
+    header { background:#10192c; color:#fff; padding:44px max(24px,calc((100vw - 1180px)/2)); } .eyebrow { color:#aab9ff; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase } h1 { margin:6px 0 8px; font-size:clamp(28px,5vw,48px); line-height:1.1 } header p { max-width:730px; color:#d7ddef; margin:0 }
+    main { max-width:1180px; margin:32px auto 64px; padding:0 24px } .notice { border-left:4px solid var(--accent); background:#e9ecff; padding:13px 16px; color:#293873; margin-bottom:22px }
+    .metrics, .grid { display:grid; gap:16px } .metrics { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); margin-bottom:16px } .grid { grid-template-columns:1.1fr .9fr } .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; box-shadow:0 8px 24px rgba(16,25,44,.04) }
+    .label { color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase }.value { font-size:34px; font-weight:750; margin-top:4px }.small { color:var(--muted); font-size:13px } h2 { margin:0 0 14px; font-size:17px } table { width:100%; border-collapse:collapse; font-size:13px } th,td { padding:9px 4px; border-bottom:1px solid var(--line); text-align:left } th { color:var(--muted); font-weight:600 } .bar { height:9px; border-radius:99px; background:linear-gradient(90deg,var(--accent),#9aa4ff) } .status { display:flex; gap:7px; align-items:center; color:var(--muted); font-size:13px }.dot { width:8px;height:8px;border-radius:50%;background:#14a46d } footer { color:var(--muted); font-size:12px; margin-top:18px } @media(max-width:800px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header><div class="eyebrow">LongHorizon · external data product</div><h1>NASA Exoplanet Archive</h1><p>A read-only, cached integration demonstrating production data lineage without mixing external science data with agent-reliability evidence.</p></header>
+  <main>
+    <div class="notice">This dashboard is an integration and data-engineering demonstrator. It is not part of the agent benchmark, KPI baseline, or paper results.</div>
+    <section class="metrics"><article class="card"><div class="label">Confirmed planets</div><div class="value" id="total">—</div><div class="small">PSCompPars composite table</div></article><article class="card"><div class="label">API mode</div><div class="value" id="cache">—</div><div class="small">Read-only NASA TAP with bounded cache</div></article><article class="card"><div class="label">Data freshness</div><div class="value" id="fresh" style="font-size:18px">—</div><div class="small">Snapshot retrieval time (UTC)</div></article></section>
+    <section class="grid"><article class="card"><h2>Discovery methods</h2><div id="methods"></div></article><article class="card"><h2>Recent catalog entries</h2><table><thead><tr><th>Planet</th><th>Year</th><th>Method</th></tr></thead><tbody id="recent"></tbody></table></article></section>
+    <footer id="provenance">Loading provenance and query contract…</footer>
+  </main>
+  <script>
+    const text = v => v == null ? '—' : String(v);
+    fetch('/v1/data-products/nasa-exoplanets').then(r => r.ok ? r.json() : Promise.reject()).then(data => {
+      document.querySelector('#total').textContent = Number(data.summary.confirmed_planets).toLocaleString();
+      document.querySelector('#cache').textContent = data.cache;
+      document.querySelector('#fresh').textContent = new Date(data.source.retrieved_at_utc).toLocaleString();
+      const methods = data.summary.by_discovery_method.filter(r => r.discoverymethod).slice(0,8), max = Math.max(...methods.map(r => r.planet_count));
+      document.querySelector('#methods').innerHTML = methods.map(r => `<div style="margin:11px 0"><div style="display:flex;justify-content:space-between"><span>${text(r.discoverymethod)}</span><b>${Number(r.planet_count).toLocaleString()}</b></div><div class="bar" style="width:${Math.max(3,100*r.planet_count/max)}%"></div></div>`).join('');
+      document.querySelector('#recent').innerHTML = data.summary.recent.map(r => `<tr><td>${text(r.pl_name)}</td><td>${text(r.disc_year)}</td><td>${text(r.discoverymethod)}</td></tr>`).join('');
+      document.querySelector('#provenance').innerHTML = `<span class="status"><i class="dot"></i> NASA Exoplanet Archive · ${data.source.table} · ${data.quality.row_contracts_verified.length} response contracts verified · cache TTL ${data.quality.cache_ttl_seconds}s</span>`;
+    }).catch(() => { document.querySelector('#provenance').textContent = 'The NASA source is unavailable at the moment. The dashboard contains no embedded fallback data.'; });
+  </script>
+</body>
+</html>

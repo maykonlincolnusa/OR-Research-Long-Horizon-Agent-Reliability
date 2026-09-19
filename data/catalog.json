@@ -10,6 +10,7 @@
     {"name": "benchmark_v0_1", "path": "data/benchmark-v0.1/", "grain": "frozen source-coordinate task card", "owner": "research", "classification": "public metadata; evaluator content withheld"},
     {"name": "run_records", "path": "results/runs.jsonl", "grain": "task x treatment x seed", "owner": "harness", "classification": "internal until reviewed"},
     {"name": "event_log", "path": "results/events.jsonl", "grain": "event", "owner": "harness", "classification": "internal until redaction validation"},
-    {"name": "experiment_warehouse", "path": "results/warehouse.sqlite", "grain": "experiment", "owner": "data-engineering", "classification": "derived"}
+    {"name": "experiment_warehouse", "path": "results/warehouse.sqlite", "grain": "experiment", "owner": "data-engineering", "classification": "derived"},
+    {"name": "nasa_exoplanet_product", "path": "services/data_products/", "grain": "API snapshot", "owner": "data-engineering", "classification": "external read-only; excluded from agent evidence"}
   ]
 }

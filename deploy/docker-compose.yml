@@ -89,6 +89,12 @@ services:
     ports: ["127.0.0.1:8083:8083"]
     networks: [control, data, egress]
 
+  data-products:
+    build: {context: .., dockerfile: deploy/Dockerfile}
+    command: uvicorn services.data_products.main:app --host 0.0.0.0 --port 8084
+    ports: ["127.0.0.1:8084:8084"]
+    networks: [data, egress]
+
 volumes:
   experiments-data: {}
   telemetry-data: {}

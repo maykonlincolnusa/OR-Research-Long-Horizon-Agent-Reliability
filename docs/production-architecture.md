@@ -45,4 +45,4 @@ flowchart LR
 
 The compose environment uses explicit environment-variable placeholders for infrastructure secrets and no defaults. Store those values only in an ignored local environment file or a deployment secret manager; do not put provider keys in runners, benchmark files, telemetry or Git history.
 
-Only the model gateway joins the non-internal `egress` network. Runners, evaluators, telemetry and the control plane stay on internal networks; this makes provider egress a reviewable, auditable exception rather than a default capability.
+Only the model gateway and explicitly approved read-only data products join the non-internal `egress` network. Runners, evaluators, telemetry and the control plane stay on internal networks; this makes provider egress a reviewable, auditable exception rather than a default capability.

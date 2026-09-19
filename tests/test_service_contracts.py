@@ -25,7 +25,7 @@ class ServiceContractTests(unittest.TestCase):
 
     def test_compose_declares_production_service_boundaries(self):
         compose = yaml.safe_load((ROOT / "deploy/docker-compose.yml").read_text(encoding="utf-8"))
-        expected = {"control-plane", "outbox-relay", "telemetry", "evaluator", "model-gateway", "nats", "minio"}
+        expected = {"control-plane", "outbox-relay", "telemetry", "evaluator", "model-gateway", "data-products", "nats", "minio"}
         self.assertTrue(expected.issubset(compose["services"]))
 
     def test_runner_rejects_non_artifact_input(self):
