@@ -1,0 +1,14 @@
+{
+  "dataset": "data/benchmarks/seed_tasks.jsonl",
+  "output": "results/runs.jsonl",
+  "event_log": "results/events.jsonl",
+  "manifest": "results/manifest.json",
+  "repetitions": 5,
+  "seed": 20260919,
+  "treatments": [
+    {"model": "fixture-gpt-like", "topology": "single-agent", "memory": "none", "strategy": "react", "context": "full"},
+    {"model": "fixture-gpt-like", "topology": "single-agent", "memory": "bounded", "strategy": "planner-executor", "context": "summary"},
+    {"model": "fixture-open-small", "topology": "single-agent", "memory": "none", "strategy": "react", "context": "sliding"},
+    {"model": "fixture-open-small", "topology": "multi-agent", "memory": "bounded", "strategy": "planner-executor", "context": "summary"}
+  ]
+}

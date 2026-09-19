@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "longhorizon-agent-reliability"
+version = "0.1.0"
+description = "Local-first experiment harness for long-horizon software-agent reliability research"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+longhorizon = "longhorizon.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
