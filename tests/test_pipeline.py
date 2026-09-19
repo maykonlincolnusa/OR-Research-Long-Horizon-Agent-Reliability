@@ -10,6 +10,8 @@ from longhorizon.logging import sanitize
 from longhorizon.evaluator import evaluate_fixture
 from longhorizon.integrity import build_manifest, validate_tasks
 from longhorizon.quality import assess_quality
+from longhorizon.data_engineering import validate_events, validate_run_records
+from longhorizon.logging import event
 from longhorizon.types import Treatment
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,6 +53,13 @@ class PipelineTests(unittest.TestCase):
         gates = {"minimum_runs": 2, "minimum_groups": 1, "minimum_runs_per_group": 2, "required_metrics": ["task_success_rate"], "expect_simulated": True}
         summary = {"runs": 1, "simulated": True, "groups": [{"n": 1, "task_success_rate": 1.0}]}
         self.assertFalse(assess_quality(summary, gates)["passed"])
+
+    def test_data_contracts_accept_a_run_and_ordered_events(self):
+        task = load_tasks(ROOT / "data/benchmarks/seed_tasks.jsonl")[0]
+        record = execute_fixture(task, Treatment("fixture-gpt-like", "single-agent", "none", "react", "full"), 7, 0).to_dict()
+        events = [event(record["run_id"], task.id, 0, "run_started", {}), event(record["run_id"], task.id, 1, "run_finished", {})]
+        self.assertEqual(validate_run_records([record]), [])
+        self.assertEqual(validate_events(events, {record["run_id"]}), [])
 
 
 if __name__ == "__main__":

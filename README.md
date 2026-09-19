@@ -12,6 +12,8 @@ py -m unittest discover -s tests -v
 py -m longhorizon validate --dataset data/benchmarks/seed_tasks.jsonl
 py -m longhorizon run --config configs/experiment.local.json
 py -m longhorizon analyze --results results/runs.jsonl --output results/summary.json
+py -m longhorizon validate-data --runs results/runs.jsonl --events results/events.jsonl
+py -m longhorizon warehouse --runs results/runs.jsonl --events results/events.jsonl --summary results/summary.json --manifest results/manifest.json --database results/warehouse.sqlite
 py -m longhorizon dashboard --summary results/summary.json --output results/dashboard.html
 ```
 
@@ -24,5 +26,9 @@ Cada rodada cria `runs.jsonl`, `events.jsonl` e `manifest.json`. O manifesto pre
 - [Baseline público fixture](reports/baseline-fixture.md): verificação reproduzível do pipeline, explicitamente não empírica.
 
 O workflow do GitHub Actions repete testes, validação, experimento, análise, quality gates e relatório a cada push ou pull request. Os artefatos da rodada ficam anexados à execução do workflow.
+
+## Engenharia de dados
+
+[A arquitetura de dados](docs/data-architecture.md) formaliza as camadas raw, normalized e curated; os contratos ficam em `schemas/`, o catálogo em `data/catalog.json` e o warehouse local em SQLite. Não há dados reais ou credenciais versionados neste repositório.
 
 O protocolo está em [docs/research-protocol.md](docs/research-protocol.md) e o esqueleto do paper em [paper/outline.md](paper/outline.md).

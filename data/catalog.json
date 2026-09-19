@@ -1,0 +1,14 @@
+{
+  "catalog_version": "0.1",
+  "layers": {
+    "raw": "Immutable benchmark inputs and captured tool/model artifacts. Never commit credentials or private repositories.",
+    "normalized": "Validated JSONL run and event records adhering to schemas/.",
+    "curated": "SQLite experiment warehouse and derived KPI tables. Rebuildable from normalized artifacts plus a manifest."
+  },
+  "assets": [
+    {"name": "benchmark_tasks", "path": "data/benchmarks/*.jsonl", "grain": "one task", "owner": "research", "classification": "public/review-required"},
+    {"name": "run_records", "path": "results/runs.jsonl", "grain": "task x treatment x seed", "owner": "harness", "classification": "internal until reviewed"},
+    {"name": "event_log", "path": "results/events.jsonl", "grain": "event", "owner": "harness", "classification": "internal until redaction validation"},
+    {"name": "experiment_warehouse", "path": "results/warehouse.sqlite", "grain": "experiment", "owner": "data-engineering", "classification": "derived"}
+  ]
+}

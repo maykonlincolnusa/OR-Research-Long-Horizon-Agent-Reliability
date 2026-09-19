@@ -9,6 +9,15 @@ description = "Local-first experiment harness for long-horizon software-agent re
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+services = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "psycopg[binary]>=3.2,<4",
+  "nats-py>=2.9,<3",
+  "PyYAML>=6.0,<7"
+]
+
 [project.scripts]
 longhorizon = "longhorizon.cli:main"
 

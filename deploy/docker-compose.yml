@@ -1,0 +1,101 @@
+name: longhorizon-research
+
+services:
+  postgres-experiments:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: experiments
+      POSTGRES_USER: experiment_service
+      POSTGRES_PASSWORD: ${EXPERIMENT_DB_PASSWORD:?set_in_env}
+    volumes: [experiments-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U experiment_service -d experiments"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [control]
+
+  postgres-telemetry:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: telemetry
+      POSTGRES_USER: telemetry_service
+      POSTGRES_PASSWORD: ${TELEMETRY_DB_PASSWORD:?set_in_env}
+    volumes: [telemetry-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U telemetry_service -d telemetry"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [data]
+
+  nats:
+    image: nats:2.10-alpine
+    command: ["-js", "-sd", "/data"]
+    volumes: [nats-data:/data]
+    networks: [control]
+
+  minio:
+    image: minio/minio:RELEASE.2024-06-13T22-53-53Z
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set_in_env}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set_in_env}
+    volumes: [artifacts-data:/data]
+    networks: [data]
+
+  control-plane:
+    build: {context: .., dockerfile: deploy/Dockerfile}
+    command: uvicorn services.control_plane.main:app --host 0.0.0.0 --port 8080
+    environment:
+      EXPERIMENT_DATABASE_URL: postgresql://experiment_service:${EXPERIMENT_DB_PASSWORD}@postgres-experiments:5432/experiments
+      NATS_URL: nats://nats:4222
+    depends_on:
+      postgres-experiments: {condition: service_healthy}
+      nats: {condition: service_started}
+    ports: ["127.0.0.1:8080:8080"]
+    networks: [control]
+
+  outbox-relay:
+    build: {context: .., dockerfile: deploy/Dockerfile}
+    command: python -m services.control_plane.outbox_relay
+    environment:
+      EXPERIMENT_DATABASE_URL: postgresql://experiment_service:${EXPERIMENT_DB_PASSWORD}@postgres-experiments:5432/experiments
+      NATS_URL: nats://nats:4222
+    depends_on:
+      postgres-experiments: {condition: service_healthy}
+      nats: {condition: service_started}
+    networks: [control]
+
+  telemetry:
+    build: {context: .., dockerfile: deploy/Dockerfile}
+    command: uvicorn services.telemetry.main:app --host 0.0.0.0 --port 8081
+    environment:
+      TELEMETRY_DATABASE_URL: postgresql://telemetry_service:${TELEMETRY_DB_PASSWORD}@postgres-telemetry:5432/telemetry
+    depends_on:
+      postgres-telemetry: {condition: service_healthy}
+    ports: ["127.0.0.1:8081:8081"]
+    networks: [data]
+
+  evaluator:
+    build: {context: .., dockerfile: deploy/Dockerfile}
+    command: uvicorn services.evaluator.main:app --host 0.0.0.0 --port 8082
+    ports: ["127.0.0.1:8082:8082"]
+    networks: [data]
+
+  model-gateway:
+    build: {context: .., dockerfile: deploy/Dockerfile}
+    command: uvicorn services.model_gateway.main:app --host 0.0.0.0 --port 8083
+    ports: ["127.0.0.1:8083:8083"]
+    networks: [control, data, egress]
+
+volumes:
+  experiments-data: {}
+  telemetry-data: {}
+  nats-data: {}
+  artifacts-data: {}
+
+networks:
+  control: {internal: true}
+  data: {internal: true}
+  egress: {}

@@ -9,6 +9,7 @@ from .dataset import load_tasks
 from .integrity import validate_tasks
 from .quality import check_files, write_check
 from .report import write_report
+from .data_engineering import build_warehouse, validate_artifacts
 
 
 def main() -> None:
@@ -33,6 +34,15 @@ def main() -> None:
     report.add_argument("--quality", required=True)
     report.add_argument("--manifest", required=True)
     report.add_argument("--output", required=True)
+    data_validate = commands.add_parser("validate-data", help="validate normalized run and event artifacts")
+    data_validate.add_argument("--runs", required=True)
+    data_validate.add_argument("--events", required=True)
+    warehouse = commands.add_parser("warehouse", help="build the local SQLite experiment warehouse")
+    warehouse.add_argument("--runs", required=True)
+    warehouse.add_argument("--events", required=True)
+    warehouse.add_argument("--summary", required=True)
+    warehouse.add_argument("--manifest", required=True)
+    warehouse.add_argument("--database", required=True)
     args = parser.parse_args()
     if args.command == "run":
         output, count = run_experiment(args.config)
@@ -52,6 +62,14 @@ def main() -> None:
         if not result["passed"]:
             raise SystemExit(1)
     else:
+        if args.command == "validate-data":
+            runs, events = validate_artifacts(args.runs, args.events)
+            print(f"Normalized artifacts valid: {len(runs)} runs, {len(events)} events")
+            return
+        if args.command == "warehouse":
+            database, experiment_id = build_warehouse(args.runs, args.events, args.summary, args.manifest, args.database)
+            print(f"Built warehouse {database} for experiment {experiment_id}")
+            return
         print(f"Wrote report to {write_report(args.summary, args.quality, args.manifest, args.output)}")
 
 

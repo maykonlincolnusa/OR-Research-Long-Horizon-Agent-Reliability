@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RunEvent v1",
+  "type": "object",
+  "required": ["specversion", "id", "source", "type", "subject", "time", "data"],
+  "properties": {
+    "specversion": {"const": "1.0"},
+    "id": {"type": "string", "minLength": 1},
+    "source": {"type": "string", "pattern": "^longhorizon\\."},
+    "type": {"type": "string", "enum": ["run.started", "run.progress", "run.completed", "run.failed", "evaluation.completed"]},
+    "subject": {"type": "string", "description": "run_id"},
+    "time": {"type": "string", "format": "date-time"},
+    "data": {"type": "object", "required": ["experiment_id", "task_id", "sequence"]}
+  },
+  "additionalProperties": false
+}
